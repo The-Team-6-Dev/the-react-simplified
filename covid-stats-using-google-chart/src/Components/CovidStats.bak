@@ -1,0 +1,58 @@
+import React, {Component} from 'react'
+
+class CovidStats extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            'country': ''
+        }
+        this.handleFormChange = this.handleFormChange.bind(this);
+        this.handleFormSubmit = this.handleFormSubmit.bind(this);
+    }
+
+    loadCovidDataForCountry(country) {
+        fetch('https://coronavirus-19-api.herokuapp.com/countries/'+country, {
+            'method': 'GET'
+        }).then(function(response) {
+            return response.json();
+        }).then(function(data) {
+            console.log(data);
+        });
+    }
+
+    handleFormChange(event) {
+        this.setState({country: event.target.value});
+        if (event.target.value) {
+            this.loadCovidDataForCountry(event.target.value)            
+        }
+    }
+
+    handleFormSubmit(event) {
+        console.log('On form submit')
+        console.log(this.state);
+
+        event.preventDefault();
+    }
+
+    onFormLoad(event) {
+        console.log('on load')
+    }
+
+    render() {
+        return (
+            <div className="Covid-Stats-Form">
+                <h2>COVID GEO STATS</h2>
+                <form onSubmit={this.handleFormSubmit} onLoad={this.onFormLoad}>
+                    <select className="Covid-Country" onChange={this.handleFormChange} value={this.state.country}>
+                        <option value=''>--Select--</option>
+                        <option value="india">India</option>
+                        <option value="usa">USA</option>
+                    </select>
+                    <button className="Covid-Stats-Search">Search</button>
+                </form>
+            </div>
+        )
+    }
+}
+
+export default CovidStats;

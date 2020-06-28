@@ -1,0 +1,105 @@
+import React, {Component} from 'react'
+import { Chart } from "react-google-charts";
+
+class CovidStats extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            'all': ''
+        }
+        this.handleFormChange = this.handleFormChange.bind(this);
+
+const chartEvents = [
+    {
+      callback: ({ chartWrapper, google }) => {
+        const chart = chartWrapper.getChart();
+        chart.container.addEventListener("click", (ev) => console.log(ev))
+      },
+      eventName: "ready"
+    }
+  ];
+
+const data = [
+["age", "weight"],
+[8, 12],
+[4, 5.5],
+[11, 14],
+[4, 5],
+[3, 3.5],
+[6.5, 7]
+];
+
+const options = {
+title: "Age vs. Weight comparison",
+hAxis: { title: "Age", viewWindow: { min: 0, max: 15 } },
+vAxis: { title: "Weight", viewWindow: { min: 0, max: 15 } },
+legend: "none"
+};
+    }
+
+    loadCovidDataForAllCountries() {
+        fetch('https://coronavirus-19-api.herokuapp.com/countries', {
+            'method': 'GET'
+        }).then(function(response) {
+            return response.json();
+        }).then(function(data) {
+            console.log(data);
+        });
+    }
+
+    handleFormChange(event) {
+       
+    }
+
+    handleFormSubmit(event) {
+        console.log('On form submit')
+        console.log(this.state);
+
+        event.preventDefault();
+    }
+
+    onFormLoad(event) {
+        console.log('on load')
+    }
+
+    render() {
+        return (
+            <div className="Covid-Stats-Form">
+                <h2>COVID GEO STATS</h2>
+                <Chart
+                    chartType="ColumnChart"
+                    width="80%"
+                    height="400px"
+                    data={[
+                        ['Country', 'Popularity'],
+                        ['Germany', 200],
+                        ['United States', 300],
+                        ['Brazil', 400],
+                        ['Canada', 500],
+                        ['France', 600],
+                        ['RU', 700],
+                    ]}
+                    chartEvents={[
+                        {
+                        eventName: "ready",
+                        callback: ({ chartWrapper, google }) => {
+                            console.log('sdfsdf')
+                            const chart = chartWrapper.getChart();
+                            google.visualization.events.addListener(chart, "onmouseover", e => {
+                                const { row, column } = e;
+                                console.warn("MOUSE OVER ", { row, column });
+                            });
+                            google.visualization.events.addListener(chart, "onmouseout", e => {
+                                const { row, column } = e;
+                                console.warn("MOUSE OUT ", { row, column });
+                            });
+                        }
+                        }
+                    ]}
+                    />
+            </div>
+        )
+    }
+}
+
+export default CovidStats;
